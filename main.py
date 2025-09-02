@@ -5,7 +5,7 @@ import gymnasium as gym
 import model
 
 # Hyperparameters
-EPISODES = 500 # Total number of training episodes
+EPISODES = 50# Total number of training episodes
 #EPISODES = 10
 BATCH_SIZE = 64 # Minibatch size for experience replay
 TARGET_UPDATE = 10 # Update target network every TARGET_UPDATE episodes
@@ -48,3 +48,6 @@ for episode in range(EPISODES):
         
         for _ in range(1):
             agent.replay(BATCH_SIZE)
+
+    if episode % TARGET_UPDATE == 0:
+        agent.q_target.load_state_dict(agent.q_network.state_dict())
