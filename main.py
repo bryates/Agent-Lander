@@ -6,7 +6,7 @@ import model
 
 # Hyperparameters
 EPISODES = 500 # Total number of training episodes
-EPISODES = 10
+#EPISODES = 10
 BATCH_SIZE = 64 # Minibatch size for experience replay
 TARGET_UPDATE = 10 # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 200 # Max steps per episode
