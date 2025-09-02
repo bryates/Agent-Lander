@@ -71,5 +71,7 @@ class DQNAgent:
         loss.backward()
         self.optimizer.step()
 
+        print(f'Current loss: {loss.item()}')
+
         if self.epsilon > self.epsilon_end:
             self.epsilon *= self.epsilon_decay
