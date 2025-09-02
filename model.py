@@ -32,6 +32,8 @@ class DQNAgent:
         self.epsilon_decay = epsilon_decay
 
         self.q_network = QNetwork(state_size, action_size)
+        self.q_target  = QNetwork(state_size, action_size)
+        self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
         self.memory = []
@@ -62,7 +64,7 @@ class DQNAgent:
         dones = torch.FloatTensor(dones).unsqueeze(1)
 
         current_q_values = self.q_network(states).gather(1, actions)
-        next_q_values = self.q_network(next_states).max(1)[0].unsqueeze(1)
+        next_q_values = self.q_target(next_states).max(1)[0].unsqueeze(1)
         target_q_values = rewards + (self.gamma * next_q_values * (1 - dones))
 
         loss = self.criterion(current_q_values, target_q_values)
