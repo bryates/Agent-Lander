@@ -1,4 +1,4 @@
 torch
 numpy
-gymnasium[classic-control]
+"gymnasium[classic-control]"
 matplotlib
