@@ -3,7 +3,6 @@
 import pytest
 import torch
 import numpy as np
-import os
 import model
 
 
