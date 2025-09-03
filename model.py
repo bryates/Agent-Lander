@@ -77,3 +77,9 @@ class DQNAgent:
 
         if self.epsilon > self.epsilon_end:
             self.epsilon *= self.epsilon_decay
+
+    def state_dict(self):
+        return self.q_network.state_dict()
+
+    def load_state_dict(self, state_dict):
+        return self.q_network.load_state_dict(state_dict)
