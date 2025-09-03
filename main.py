@@ -7,9 +7,9 @@ import numpy as np
 import model
 
 # Hyperparameters
-EPISODES = 1000  # Total number of training episodes
+EPISODES = 2000  # Total number of training episodes
 BATCH_SIZE = 64  # Minibatch size for experience replay
-TARGET_UPDATE = 5  # Update target network every TARGET_UPDATE episodes
+TARGET_UPDATE = 10  # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 200  # Max steps per episode
 EVAL_EPISODES = 10  # Number of episodes for evaluation
 EVAL_INTERVAL = 50  # Evaluate the agent every EVAL_INTERVAL episodes
@@ -44,7 +44,7 @@ rewards = []
 for episode in range(EPISODES):
     state, info = env.reset()
     # state, info = env.reset(seed=SEED)
-    #print(f"Episode {episode+1}/{EPISODES}, Previous total reward: {total_reward}")
+    # print(f"Episode {episode+1}/{EPISODES}, Previous total reward: {total_reward}")
     if RENDER and total_reward > 0:
         env.render(render_mode="human")
     done = False
