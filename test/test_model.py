@@ -6,10 +6,11 @@ import numpy as np
 import model
 
 
-SEED = 42 # Random seed for reproducibility
+SEED = 42 #  Random seed for reproducibility
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 BATCH_SIZE = 256  # Minibatch size for experience replay
+
 
 def pytest_namespace():
     '''Create namespace for sharing data between tests.'''
@@ -50,7 +51,8 @@ def test_remember():
 def test_predict():
     agent = pytest.agent
     state = np.random.rand(8)
-    action = agent.act(state)
+    # action = agent.act(state)
+    agent.act(state)
     assert True
 
 
