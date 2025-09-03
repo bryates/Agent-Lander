@@ -20,6 +20,7 @@ def test_create_model(request):
     pytest.agent = agent
     assert True
 
+
 def test_save_model(request):
     # agent = request.config.cache.get('moddl', None)
     agent = pytest.agent
@@ -27,6 +28,7 @@ def test_save_model(request):
         assert False, 'Could not find model!'
     torch.save(agent.state_dict(), 'agent.pth')
     assert True
+
 
 def test_load_model(request):
     LEARNING_RATE = 1e-3  # Learning rate for the optimizer

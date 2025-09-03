@@ -25,7 +25,8 @@ SEED = 42  # Random seed for reproducibility
 # np.random.seed(SEED)
 # torch.manual_seed(SEED)
 
-env = gym.make(ENV_NAME)  #, render_mode="human")
+env = gym.make(ENV_NAME)
+# env = gym.make(ENV_NAME, render_mode="human")
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
@@ -39,7 +40,8 @@ agent = model.DQNAgent(state_size, action_size,
 total_reward = 0
 rewards = []
 for episode in range(EPISODES):
-    state, info = env.reset()  #seed=SEED)
+    state, info = env.reset()
+    # state, info = env.reset(seed=SEED)
     print(f"Episode {episode+1}/{EPISODES}, Previous total reward: {total_reward}")
     done = False
     total_reward = 0
