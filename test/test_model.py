@@ -3,12 +3,17 @@
 import pytest
 import torch
 import numpy as np
+import os
 import model
 
 
 SEED = 42  # Random seed for reproducibility
 np.random.seed(SEED)
 torch.manual_seed(SEED)
+torch.cuda.manual_seed(SEED)               # PyTorch GPU
+torch.cuda.manual_seed_all(SEED)           # If using multi-GPU
+torch.backends.cudnn.deterministic = True  # Make CuDNN deterministic
+torch.backends.cudnn.benchmark = False     # Disable benchmark for reproducibility
 BATCH_SIZE = 256  # Minibatch size for experience replay
 
 
@@ -21,7 +26,7 @@ def test_create_model():
     '''Test creating a DQNAgent model.'''
     LEARNING_RATE = 1e-3  # Learning rate for the optimizer
     GAMMA = 0.99  # Discount factor for future rewards
-    EPSILON_START = 1.0  # Initial exploration rate
+    EPSILON_START = 0  # Disable for reproducibility
     EPSILON_END = 0.01  # Final exploration rate
     EPSILON_DECAY = 0.995  # Decay rate for exploration probability
 
@@ -51,9 +56,8 @@ def test_remember():
 def test_predict():
     agent = pytest.agent
     state = np.random.rand(8)
-    # action = agent.act(state)
-    agent.act(state)
-    assert True
+    action = agent.act(state)
+    assert action == 1
 
 
 def test_replay():
