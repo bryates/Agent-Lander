@@ -6,7 +6,7 @@ import numpy as np
 import model
 
 
-SEED = 42 #  Random seed for reproducibility
+SEED = 42  # Random seed for reproducibility
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 BATCH_SIZE = 256  # Minibatch size for experience replay
