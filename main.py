@@ -50,6 +50,7 @@ agent = model.DQNAgent(state_size, action_size,
 total_reward = 0
 rewards = []
 
+
 def landing_penalty(curr_reward, curr_state, curr_action):
     '''Custom reward to reduce engine firing.'''
     # state = [x, y, x_vel, y_vel, angle, angular_vel, leg1_contact, leg2_contact]
@@ -70,6 +71,7 @@ def landing_penalty(curr_reward, curr_state, curr_action):
             curr_reward -= 0.1
 
     return curr_reward
+
 
 for episode in range(EPISODES):
     state, info = env.reset()
