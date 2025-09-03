@@ -1,8 +1,8 @@
 '''Deep Q-Network (DQN) implementation for reinforcement learning tasks using PyTorch.'''
+import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import random
 
 
 # Define the Q-network
@@ -28,7 +28,8 @@ class QNetwork(nn.Module):
 # Define the DQN agent
 class DQNAgent:
     '''Deep Q-Network Agent for reinforcement learning tasks.'''
-    def __init__(self, state_size, action_size, lr=1e-3, gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995):
+    def __init__(self, state_size, action_size, hidden_size, lr=1e-3,
+                 gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995):
         self.state_size = state_size
         self.action_size = action_size
         self.gamma = gamma
@@ -36,8 +37,8 @@ class DQNAgent:
         self.epsilon_end = epsilon_end
         self.epsilon_decay = epsilon_decay
 
-        self.q_network = QNetwork(state_size, action_size)
-        self.q_target = QNetwork(state_size, action_size)
+        self.q_network = QNetwork(state_size, action_size, hidden_size)
+        self.q_target = QNetwork(state_size, action_size, hidden_size)
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
@@ -76,8 +77,10 @@ class DQNAgent:
 
         self.optimizer.zero_grad()
         loss.backward()
+        nn.utils.clip_grad_norm_(self.q_network.parameters(), 1.0)
         self.optimizer.step()
 
+    def update_epsilon(self):
         if self.epsilon > self.epsilon_end:
             self.epsilon *= self.epsilon_decay
 
@@ -86,3 +89,6 @@ class DQNAgent:
 
     def load_state_dict(self, state_dict):
         return self.q_network.load_state_dict(state_dict)
+
+    def update_target(self):
+        self.q_target.load_state_dict(self.q_network.state_dict())
