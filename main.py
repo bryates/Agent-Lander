@@ -6,10 +6,9 @@ from matplotlib import pyplot as plt
 import model
 
 # Hyperparameters
-EPISODES = 10# Total number of training episodes
-#EPISODES = 10
+EPISODES = 500 # Total number of training episodes
 BATCH_SIZE = 64 # Minibatch size for experience replay
-TARGET_UPDATE = 10 # Update target network every TARGET_UPDATE episodes
+TARGET_UPDATE = 100 # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 200 # Max steps per episode
 EVAL_EPISODES = 10 # Number of episodes for evaluation
 EVAL_INTERVAL = 50 # Evaluate the agent every EVAL_INTERVAL episodes
@@ -41,7 +40,7 @@ total_reward = 0
 rewards = []
 for episode in range(EPISODES):
     state, info = env.reset()#seed=SEED)
-    print(f"Episode {episode+1}/{EPISODES}, Initial state: {state}, Previous total reward: {total_reward}")
+    print(f"Episode {episode+1}/{EPISODES}, Previous total reward: {total_reward}")
     done = False
     total_reward = 0
     if RENDER:
@@ -54,7 +53,7 @@ for episode in range(EPISODES):
         agent.remember(state, action, reward, next_state, done)
         state = next_state
         total_reward += reward
-        
+
         agent.replay(BATCH_SIZE)
 
     if episode % TARGET_UPDATE == 0:
