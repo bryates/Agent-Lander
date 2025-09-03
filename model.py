@@ -1,5 +1,6 @@
 '''Deep Q-Network (DQN) implementation for reinforcement learning tasks using PyTorch.'''
 import random
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -63,11 +64,16 @@ class DQNAgent:
         batch = random.sample(self.memory, batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
 
-        states = torch.FloatTensor(states)
-        actions = torch.LongTensor(actions).unsqueeze(1)
-        rewards = torch.FloatTensor(rewards).unsqueeze(1)
-        next_states = torch.FloatTensor(next_states)
-        dones = torch.FloatTensor(dones).unsqueeze(1)
+        # states = torch.FloatTensor(states)
+        # actions = torch.LongTensor(actions).unsqueeze(1)
+        # rewards = torch.FloatTensor(rewards).unsqueeze(1)
+        # next_states = torch.FloatTensor(next_states)
+        # dones = torch.FloatTensor(dones).unsqueeze(1)
+        states = torch.FloatTensor(np.array(states))
+        actions = torch.LongTensor(np.array(actions)).unsqueeze(1)
+        rewards = torch.FloatTensor(np.array(rewards)).unsqueeze(1)
+        next_states = torch.FloatTensor(np.array(next_states))
+        dones = torch.FloatTensor(np.array(dones)).unsqueeze(1)
 
         current_q_values = self.q_network(states).gather(1, actions)
         next_q_values = self.q_target(next_states).max(1)[0].unsqueeze(1)
