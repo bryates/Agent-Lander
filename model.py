@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import random
 
+
 # Define the Q-network
 class QNetwork(nn.Module):
     '''Basic feedforward neural network for approximating Q-values.'''
@@ -23,6 +24,7 @@ class QNetwork(nn.Module):
     def forward(self, x):
         return self.model(x)
 
+
 # Define the DQN agent
 class DQNAgent:
     '''Deep Q-Network Agent for reinforcement learning tasks.'''
@@ -35,7 +37,7 @@ class DQNAgent:
         self.epsilon_decay = epsilon_decay
 
         self.q_network = QNetwork(state_size, action_size)
-        self.q_target  = QNetwork(state_size, action_size)
+        self.q_target = QNetwork(state_size, action_size)
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
