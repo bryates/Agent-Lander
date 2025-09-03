@@ -1,11 +1,12 @@
-import torch
-from torch import nn
-import numpy as np
+'''Deep Q-Network (DQN) implementation for the 
+LunarLander-v3 environment using PyTorch and Gymnasium.'''
+
 import gymnasium as gym
+from matplotlib import pyplot as plt
 import model
 
 # Hyperparameters
-EPISODES = 50# Total number of training episodes
+EPISODES = 10# Total number of training episodes
 #EPISODES = 10
 BATCH_SIZE = 64 # Minibatch size for experience replay
 TARGET_UPDATE = 10 # Update target network every TARGET_UPDATE episodes
@@ -19,25 +20,33 @@ EPSILON_END = 0.01 # Final exploration rate
 EPSILON_DECAY = 0.995 # Decay rate for exploration probability
 HIDDEN_SIZE = 64 # Number of neurons in hidden layers
 ENV_NAME = 'LunarLander-v3' # Name of the Gym environment
+RENDER = False # Whether to render the environment
 SEED = 42 # Random seed for reproducibility
 
 #np.random.seed(SEED)
 #torch.manual_seed(SEED)
 
-env = gym.make(ENV_NAME, render_mode="human")
+env = gym.make(ENV_NAME)#, render_mode="human")
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
-agent = model.DQNAgent(state_size, action_size, lr=LEARNING_RATE, gamma=GAMMA,
-                       epsilon_start=EPSILON_START, epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
+agent = model.DQNAgent(state_size, action_size,
+                        lr=LEARNING_RATE,
+                        gamma=GAMMA,
+                        epsilon_start=EPSILON_START,
+                        epsilon_end=EPSILON_END,
+                        epsilon_decay=EPSILON_DECAY)
 
 total_reward = 0
+rewards = []
 for episode in range(EPISODES):
     state, info = env.reset()#seed=SEED)
     print(f"Episode {episode+1}/{EPISODES}, Initial state: {state}, Previous total reward: {total_reward}")
     done = False
     total_reward = 0
-    
+    if RENDER:
+        env.render()
+
     while not done:
         action = agent.act(state)
         next_state, reward, terminated, truncated, _ = env.step(action)
@@ -46,8 +55,14 @@ for episode in range(EPISODES):
         state = next_state
         total_reward += reward
         
-        for _ in range(1):
-            agent.replay(BATCH_SIZE)
+        agent.replay(BATCH_SIZE)
 
     if episode % TARGET_UPDATE == 0:
         agent.q_target.load_state_dict(agent.q_network.state_dict())
+
+    rewards.append(total_reward)
+
+plt.plot(rewards)
+plt.xlabel('Episode')
+plt.ylabel('Total Reward')
+plt.show()

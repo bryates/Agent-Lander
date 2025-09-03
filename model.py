@@ -1,3 +1,4 @@
+'''Deep Q-Network (DQN) implementation for reinforcement learning tasks using PyTorch.'''
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -5,6 +6,7 @@ import random
 
 # Define the Q-network
 class QNetwork(nn.Module):
+    '''Basic feedforward neural network for approximating Q-values.'''
     def __init__(self, state_size, action_size, hidden_size=64):
         super(QNetwork, self).__init__()
         self.fc1 = nn.Linear(state_size, hidden_size)
@@ -23,6 +25,7 @@ class QNetwork(nn.Module):
 
 # Define the DQN agent
 class DQNAgent:
+    '''Deep Q-Network Agent for reinforcement learning tasks.'''
     def __init__(self, state_size, action_size, lr=1e-3, gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995):
         self.state_size = state_size
         self.action_size = action_size
@@ -72,8 +75,6 @@ class DQNAgent:
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-
-        print(f'Current loss: {loss.item()}')
 
         if self.epsilon > self.epsilon_end:
             self.epsilon *= self.epsilon_decay
