@@ -4,7 +4,7 @@ LunarLander-v3 environment using PyTorch and Gymnasium.'''
 import warnings
 warnings.filterwarnings(
     "ignore",
-    message="builtin type SwigPy.* has no __module__ attribute",
+    message="builtin type .* has no __module__ attribute",
     category=DeprecationWarning,
 )
 import gymnasium as gym
