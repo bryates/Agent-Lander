@@ -1,10 +1,13 @@
 '''Deep Q-Network (DQN) implementation for the
 LunarLander-v3 environment using PyTorch and Gymnasium.'''
 
+import warnings
+warnings.filterwarnings(
+    "ignore",
+    message="builtin type SwigPy.* has no __module__ attribute",
+    category=DeprecationWarning,
+)
 import gymnasium as gym
-import Box2D
-Box2D.b2.SWIG_PyPacked.__module__ = "Box2D"
-Box2D.b2.SWIG_PyObject.__module__ = "Box2D"
 
 ENV_NAME = 'LunarLander-v3'  # Name of the Gym environment
 env = gym.make(ENV_NAME)
