@@ -29,15 +29,14 @@ EPSILON_DECAY = 0.995  # Decay rate for exploration probability
 
 @pytest.fixture(scope='module', autouse=True)
 def agent():
-    '''Test creating a DQNAgent model.'''
-    agent = model.DQNAgent(state_size=STATE_SIZE, action_size=ACTION_SIZE, hidden_size=HIDDEN_SIZE, lr=LEARNING_RATE,
+    '''Fixture to create a fresh agent for each test.'''
+    return model.DQNAgent(state_size=STATE_SIZE, action_size=ACTION_SIZE, hidden_size=HIDDEN_SIZE, lr=LEARNING_RATE,
                            gamma=GAMMA, epsilon_start=EPSILON_START,
                            epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
-    return agent
 
 
 def test_create_model(agent):
-    """Model should output the right shape given input state."""
+    '''Model should output the right shape given input state.'''
     x = torch.randn(1, STATE_SIZE)
     y = agent.q_network(x)
     assert y.shape == (1, ACTION_SIZE)
@@ -56,7 +55,7 @@ def test_remember(agent):
 
 
 def test_act_deterministic(agent):
-    """With epsilon=0, actions should always be greedy and repeatable."""
+    '''With epsilon=0, actions should always be greedy and repeatable.'''
     agent.epsilon = 0.0
     state = np.ones(STATE_SIZE)
     action1 = agent.act(state)
@@ -66,7 +65,7 @@ def test_act_deterministic(agent):
 
 
 def test_act_exploratory(agent):
-    """With epsilon=1, actions should come from the random branch."""
+    '''With epsilon=1, actions should come from the random branch.'''
     agent.epsilon = 1.0
     state = np.ones(STATE_SIZE)
     actions = [agent.act(state) for _ in range(NUM_RANDOM_ACTIONS)]
@@ -81,7 +80,7 @@ def test_replay(agent):
 
 
 def test_learn_updates_weights(agent):
-    """A learning step should update model weights."""
+    '''A learning step should update model weights.'''
     params_before = [p.clone() for p in agent.q_network.parameters()]
 
     agent.replay(BATCH_SIZE)
@@ -92,7 +91,7 @@ def test_learn_updates_weights(agent):
 
 
 def test_epsilon_decay(agent):
-    """Epsilon should decay but not go below epsilon_end."""
+    '''Epsilon should decay but not go below epsilon_end.'''
     start_epsilon = agent.epsilon
     agent.update_epsilon()
     assert agent.epsilon < start_epsilon
