@@ -30,9 +30,14 @@ EPSILON_DECAY = 0.995  # Decay rate for exploration probability
 @pytest.fixture(scope='module', autouse=True)
 def agent():
     '''Fixture to create a fresh agent for each test.'''
-    return model.DQNAgent(state_size=STATE_SIZE, action_size=ACTION_SIZE, hidden_size=HIDDEN_SIZE, lr=LEARNING_RATE,
-                           gamma=GAMMA, epsilon_start=EPSILON_START,
-                           epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
+    return model.DQNAgent(state_size=STATE_SIZE,
+                           action_size=ACTION_SIZE,
+                           hidden_size=HIDDEN_SIZE,
+                           lr=LEARNING_RATE,
+                           gamma=GAMMA,
+                           epsilon_start=EPSILON_START,
+                           epsilon_end=EPSILON_END,
+                           epsilon_decay=EPSILON_DECAY)
 
 
 def test_create_model(agent):
