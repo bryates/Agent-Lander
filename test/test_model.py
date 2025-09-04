@@ -15,9 +15,9 @@ torch.backends.cudnn.deterministic = True  # Make CuDNN deterministic
 torch.backends.cudnn.benchmark = False     # Disable benchmark for reproducibility
 
 LEARNING_RATE = 1e-3  # Learning rate for the optimizer
-STATE_SIZE = 8 # Size of the state space
-ACTION_SIZE = 4 # Number of possible actions
-HIDDEN_SIZE = 64 # Number of neurons in hidden layers
+STATE_SIZE = 8  # Size of the state space
+ACTION_SIZE = 4  # Number of possible actions
+HIDDEN_SIZE = 64  # Number of neurons in hidden layers
 BATCH_SIZE = 256  # Minibatch size for experience replay
 NUM_RANDOM_ACTIONS = 50  # Number of actions to sample when testing exploration
 NUM_DECAY_STEPS = 1000  # Number of steps to test epsilon decay
@@ -34,7 +34,6 @@ def agent():
                            gamma=GAMMA, epsilon_start=EPSILON_START,
                            epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
     return agent
-    assert True
 
 
 def test_create_model(agent):
