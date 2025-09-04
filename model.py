@@ -1,6 +1,7 @@
 '''Deep Q-Network (DQN) implementation for reinforcement learning tasks using PyTorch.'''
 import random
 import numpy as np
+from collections import deque
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -43,7 +44,7 @@ class DQNAgent:
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
-        self.memory = []
+        self.memory = deque(maxlen=10000)
 
     def act(self, state):
         if random.random() < self.epsilon:
@@ -55,8 +56,8 @@ class DQNAgent:
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
-        if len(self.memory) > 10000:
-            self.memory.pop(0)
+        # if len(self.memory) > 10000:
+        #     self.memory.pop(0)
 
     def replay(self, batch_size):
         if len(self.memory) < batch_size:
