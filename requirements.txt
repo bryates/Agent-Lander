@@ -1,6 +1,5 @@
 torch
 numpy
-gymnasium[classic-control,box2d] ; platform_system != "Windows" and platform_system != "Darwin"
-gymnasium[classic-control] ; platform_system == "Windows" or platform_system == "Darwin"
-Box2D ; platform_system == "Windows" or platform_system == "Darwin"
+gymnasium[classic-control]
+Box2D
 matplotlib
