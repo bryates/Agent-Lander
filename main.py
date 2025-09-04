@@ -91,7 +91,6 @@ def normalize_state(state):
     norm_state[5] = state[5] / 5.0        # angular_vel
     norm_state[6] = state[6]              # leg1 contact (0 or 1)
     norm_state[7] = state[7]              # leg2 contact (0 or 1)
-  
     return norm_state
 
 
