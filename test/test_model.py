@@ -33,9 +33,7 @@ def agent():
     agent = model.DQNAgent(state_size=STATE_SIZE, action_size=ACTION_SIZE, hidden_size=HIDDEN_SIZE, lr=LEARNING_RATE,
                            gamma=GAMMA, epsilon_start=EPSILON_START,
                            epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
-    # request.config.cache.set('moddl', agent)
     return agent
-    pytest.agent = agent
     assert True
 
 
