@@ -83,7 +83,6 @@ def normalize_state(state):
     '''Normalize state features to range [-1, 1] where applicable.'''
     # State: [x, y, x_vel, y_vel, angle, angular_vel, leg1, leg2]
     norm_state = np.zeros_like(state, dtype=np.float32)
-    
     norm_state[0] = state[0] / 1.5        # x
     norm_state[1] = state[1] / 1.0        # y
     norm_state[2] = state[2] / 5.0        # x_vel
@@ -92,7 +91,7 @@ def normalize_state(state):
     norm_state[5] = state[5] / 5.0        # angular_vel
     norm_state[6] = state[6]              # leg1 contact (0 or 1)
     norm_state[7] = state[7]              # leg2 contact (0 or 1)
-    
+  
     return norm_state
 
 
