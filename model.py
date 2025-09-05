@@ -1,7 +1,5 @@
 '''Deep Q-Network (DQN) implementation for reinforcement learning tasks using PyTorch.'''
 import random
-from collections import deque
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,6 +23,7 @@ class QNetwork(nn.Module):
         )
 
     def forward(self, x):
+        '''Forward pass through the network.'''
         return self.model(x)
 
 
@@ -46,9 +45,10 @@ class DQNAgent:
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
-        self.memory = memory.ReplayMemory(self.state_size, 10_000, self.batch_size) # deque(maxlen=10000)
+        self.memory = memory.ReplayMemory(self.state_size, 10_000, self.batch_size)
 
     def act(self, state):
+        '''Epsilon-greedy action selection.'''
         if random.random() < self.epsilon:
             return random.randint(0, self.action_size - 1)
         state = torch.FloatTensor(state).unsqueeze(0)
@@ -57,25 +57,14 @@ class DQNAgent:
         return q_values.argmax().item()
 
     def remember(self, state, action, reward, next_state, done):
+        '''Store experience in replay memory.'''
         self.memory.store(state, next_state, action, reward, done)
-        # self.memory.append((state, action, reward, next_state, done))
-        # if len(self.memory) > 10000:
-        #     self.memory.pop(0)
 
     def replay(self):
+        '''Sample a batch of experiences and perform a learning step.'''
         if not self.memory.ready():
             return
         states, next_states, actions, rewards, dones = self.memory.sample()
-        # if len(self.memory) < batch_size:
-        #     return
-        # batch = random.sample(self.memory, batch_size)
-        # states, actions, rewards, next_states, dones = zip(*batch)
-
-        # states = torch.FloatTensor(states)
-        # actions = torch.LongTensor(actions).unsqueeze(1)
-        # rewards = torch.FloatTensor(rewards).unsqueeze(1)
-        # next_states = torch.FloatTensor(next_states)
-        # dones = torch.FloatTensor(dones).unsqueeze(1)
         states = torch.FloatTensor(states)
         actions = torch.LongTensor(actions).unsqueeze(1)
         rewards = torch.FloatTensor(rewards).unsqueeze(1)
@@ -94,14 +83,18 @@ class DQNAgent:
         self.optimizer.step()
 
     def update_epsilon(self):
+        '''Decay epsilon after each episode.'''
         if self.epsilon > self.epsilon_end:
             self.epsilon *= self.epsilon_decay
 
     def state_dict(self):
+        '''Get the state dictionary of the Q-network.'''
         return self.q_network.state_dict()
 
     def load_state_dict(self, state_dict):
+        '''Load the state dictionary into the Q-network.'''
         return self.q_network.load_state_dict(state_dict)
 
     def update_target(self):
+        '''Update the target network to match the Q-network.'''
         self.q_target.load_state_dict(self.q_network.state_dict())
