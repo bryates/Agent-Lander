@@ -2,8 +2,10 @@
 LunarLander-v3 environment using PyTorch and Gymnasium.'''
 
 import os
+import datetime
 from matplotlib import pyplot as plt
 import numpy as np
+import torch
 import gymnasium as gym
 from gymnasium.wrappers import RecordVideo
 import model
@@ -26,7 +28,7 @@ RENDER = False  # Whether to render the environment
 SEED = 42  # Random seed for reproducibility
 
 # Directory where videos will be saved
-VIDEO_DIR = "videos"
+VIDEO_DIR = "data/videos"
 os.makedirs(VIDEO_DIR, exist_ok=True)
 
 # np.random.seed(SEED)
@@ -141,6 +143,10 @@ for episode in range(EPISODES):
               f"Epsilon: {agent.epsilon:.3f}, Total Reward (last episode): {total_reward:.2f}")
 
     agent.update_epsilon()
+
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+model_path = f"data/models/agent_{timestamp}.pth"
+torch.save(agent.state_dict(), model_path)
 
 moving_avg = np.convolve(rewards, np.ones((EVAL_INTERVAL,))/EVAL_INTERVAL, mode='valid')
 
