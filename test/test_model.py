@@ -32,6 +32,7 @@ def agent():
     '''Fixture to create a fresh agent for each test.'''
     return model.DQNAgent(state_size=STATE_SIZE,
                           action_size=ACTION_SIZE,
+                          batch_size=BATCH_SIZE,
                           hidden_size=HIDDEN_SIZE,
                           lr=LEARNING_RATE,
                           gamma=GAMMA,
@@ -50,7 +51,7 @@ def test_create_model(agent):
 def test_remember(agent):
     '''Test remembering a transition.'''
     # Fill memory with at least BATCH_SIZE transitions
-    for _ in range(BATCH_SIZE):
+    for _ in range(BATCH_SIZE*2):
         state = np.random.rand(STATE_SIZE).astype(np.float32).tolist()
         action = np.random.randint(ACTION_SIZE)
         reward = np.random.randn()
@@ -80,7 +81,7 @@ def test_act_exploratory(agent):
 
 def test_replay(agent):
     '''Test training the model with experience replay.'''
-    agent.replay(BATCH_SIZE)
+    agent.replay()
     assert True
 
 
@@ -88,7 +89,7 @@ def test_learn_updates_weights(agent):
     '''A learning step should update model weights.'''
     params_before = [p.clone() for p in agent.q_network.parameters()]
 
-    agent.replay(BATCH_SIZE)
+    agent.replay()
 
     params_after = list(agent.q_network.parameters())
     changed = any((p1 - p2).abs().sum() > 0 for p1, p2 in zip(params_before, params_after))
@@ -115,17 +116,17 @@ def test_save_model(agent):
 
 def test_load_model(agent):
     ''' Test loading a DQNAgent model.'''
-    LEARNING_RATE = 1e-3  # Learning rate for the optimizer
-    GAMMA = 0.99  # Discount factor for future rewards
-    EPSILON_START = 1.0  # Initial exploration rate
-    EPSILON_END = 0.01  # Final exploration rate
-    EPSILON_DECAY = 0.995  # Decay rate for exploration probability
-
     if not agent:
         assert False, 'Could not find model!'
-    agent_new = model.DQNAgent(state_size=8, action_size=4, hidden_size=64, lr=LEARNING_RATE,
-                               gamma=GAMMA, epsilon_start=EPSILON_START,
-                               epsilon_end=EPSILON_END, epsilon_decay=EPSILON_DECAY)
+    agent_new = model.DQNAgent(state_size=STATE_SIZE,
+                               action_size=ACTION_SIZE,
+                               batch_size=BATCH_SIZE,
+                               hidden_size=HIDDEN_SIZE,
+                               lr=LEARNING_RATE,
+                               gamma=GAMMA,
+                               epsilon_start=EPSILON_START,
+                               epsilon_end=EPSILON_END,
+                               epsilon_decay=EPSILON_DECAY)
     agent_new.load_state_dict(torch.load('agent.pth'))
     for key in agent.state_dict():
         assert torch.all(agent.state_dict()[key] == agent_new.state_dict()[key])

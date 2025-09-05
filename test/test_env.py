@@ -38,6 +38,7 @@ def test_env():
     action_size = env.action_space.n
 
     agent = model.DQNAgent(state_size, action_size,
+                           batch_size=BATCH_SIZE,
                            hidden_size=HIDDEN_SIZE,
                            lr=LEARNING_RATE,
                            gamma=GAMMA,
@@ -55,6 +56,6 @@ def test_env():
         state = next_state
         total_reward += reward
 
-        agent.replay(BATCH_SIZE)
+        agent.replay()
 
     assert True
