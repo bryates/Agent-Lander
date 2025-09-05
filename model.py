@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import memory
 
 
 # Define the Q-network
@@ -30,8 +31,9 @@ class QNetwork(nn.Module):
 # Define the DQN agent
 class DQNAgent:
     '''Deep Q-Network Agent for reinforcement learning tasks.'''
-    def __init__(self, state_size, action_size, hidden_size, lr=1e-3,
+    def __init__(self, state_size, action_size, batch_size, hidden_size, lr=1e-3,
                  gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995):
+        self.batch_size = batch_size
         self.state_size = state_size
         self.action_size = action_size
         self.gamma = gamma
@@ -44,7 +46,7 @@ class DQNAgent:
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
-        self.memory = deque(maxlen=10000)
+        self.memory = memory.ReplayMemory(self.state_size, 10_000, self.batch_size) # deque(maxlen=10000)
 
     def act(self, state):
         if random.random() < self.epsilon:
@@ -55,26 +57,30 @@ class DQNAgent:
         return q_values.argmax().item()
 
     def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))
+        self.memory.store(state, next_state, action, reward, done)
+        # self.memory.append((state, action, reward, next_state, done))
         # if len(self.memory) > 10000:
         #     self.memory.pop(0)
 
-    def replay(self, batch_size):
-        if len(self.memory) < batch_size:
+    def replay(self):
+        if not self.memory.ready():
             return
-        batch = random.sample(self.memory, batch_size)
-        states, actions, rewards, next_states, dones = zip(*batch)
+        states, next_states, actions, rewards, dones = self.memory.sample()
+        # if len(self.memory) < batch_size:
+        #     return
+        # batch = random.sample(self.memory, batch_size)
+        # states, actions, rewards, next_states, dones = zip(*batch)
 
         # states = torch.FloatTensor(states)
         # actions = torch.LongTensor(actions).unsqueeze(1)
         # rewards = torch.FloatTensor(rewards).unsqueeze(1)
         # next_states = torch.FloatTensor(next_states)
         # dones = torch.FloatTensor(dones).unsqueeze(1)
-        states = torch.FloatTensor(np.array(states))
-        actions = torch.LongTensor(np.array(actions)).unsqueeze(1)
-        rewards = torch.FloatTensor(np.array(rewards)).unsqueeze(1)
-        next_states = torch.FloatTensor(np.array(next_states))
-        dones = torch.FloatTensor(np.array(dones)).unsqueeze(1)
+        states = torch.FloatTensor(states)
+        actions = torch.LongTensor(actions).unsqueeze(1)
+        rewards = torch.FloatTensor(rewards).unsqueeze(1)
+        next_states = torch.FloatTensor(next_states)
+        dones = torch.FloatTensor(dones).unsqueeze(1)
 
         current_q_values = self.q_network(states).gather(1, actions)
         next_q_values = self.q_target(next_states).max(1)[0].unsqueeze(1)
