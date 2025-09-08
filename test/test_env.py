@@ -2,7 +2,7 @@
 LunarLander-v3 environment using PyTorch and Gymnasium.'''
 
 import warnings
-import numpy as np
+import torch
 import gymnasium as gym
 import model
 warnings.filterwarnings(
@@ -28,7 +28,7 @@ ENV_NAME = 'LunarLander-v3'  # Name of the Gym environment
 RENDER = False  # Whether to render the environment
 SEED = 42  # Random seed for reproducibility
 
-np.random.seed(SEED)
+torch.manual_seed(SEED)
 
 def test_env():
     '''Test if the environment works with the agent.'''
@@ -49,8 +49,11 @@ def test_env():
     total_reward = 0
     for _ in range(EPISODES):
         state, _ = env.reset(seed=SEED)
+        state = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
         action = agent.act(state)
         next_state, reward, terminated, truncated, _ = env.step(action)
+        next_state = torch.tensor(next_state, dtype=torch.float32).unsqueeze(0)
+        action = torch.tensor(action, dtype=torch.int64).unsqueeze(0)
         done = terminated or truncated
         agent.remember(state, action, reward, next_state, done)
         state = next_state

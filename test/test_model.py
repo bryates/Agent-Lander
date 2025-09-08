@@ -1,13 +1,12 @@
 '''Unit tests for the DQNAgent model.'''
 
 import pytest
-import torch
 import numpy as np
+import torch
 import model
 
 
 SEED = 42  # Random seed for reproducibility
-np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)               # PyTorch GPU
 torch.cuda.manual_seed_all(SEED)           # If using multi-GPU
@@ -52,18 +51,18 @@ def test_remember(agent):
     '''Test remembering a transition.'''
     # Fill memory with at least BATCH_SIZE transitions
     for _ in range(BATCH_SIZE*2):
-        state = np.random.rand(STATE_SIZE).astype(np.float32).tolist()
+        state = torch.rand(STATE_SIZE, dtype=torch.float32)
         action = np.random.randint(ACTION_SIZE)
-        reward = np.random.randn()
-        next_state = np.random.rand(STATE_SIZE).astype(np.float32).tolist()
-        done = False
+        reward = torch.rand(1)
+        next_state = torch.rand(STATE_SIZE, dtype=torch.float32)
+        done = torch.tensor(False, dtype=torch.float32)
         agent.remember(state, action, reward, next_state, done)
 
 
 def test_act_deterministic(agent):
     '''With epsilon=0, actions should always be greedy and repeatable.'''
     agent.epsilon = 0.0
-    state = np.ones(STATE_SIZE)
+    state = torch.ones(STATE_SIZE)
     action1 = agent.act(state)
     action2 = agent.act(state)
     assert isinstance(action1, int)
@@ -73,7 +72,7 @@ def test_act_deterministic(agent):
 def test_act_exploratory(agent):
     '''With epsilon=1, actions should come from the random branch.'''
     agent.epsilon = 1.0
-    state = np.ones(STATE_SIZE)
+    state = torch.ones(STATE_SIZE)
     actions = [agent.act(state) for _ in range(NUM_RANDOM_ACTIONS)]
     assert all(0 <= a < ACTION_SIZE for a in actions)
     assert len(set(actions)) > 1  # should not be the same every time
@@ -93,6 +92,7 @@ def test_learn_updates_weights(agent):
 
     params_after = list(agent.q_network.parameters())
     changed = any((p1 - p2).abs().sum() > 0 for p1, p2 in zip(params_before, params_after))
+    print(changed)
     assert changed
 
 
