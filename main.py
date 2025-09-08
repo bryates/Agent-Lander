@@ -8,10 +8,11 @@ import numpy as np
 import torch
 import gymnasium as gym
 from gymnasium.wrappers import RecordVideo
+from gymnasium.wrappers import NumpyToTorch
 import model
 
 # Hyperparameters
-EPISODES = 2000  # Total number of training episodes
+EPISODES = 500  # Total number of training episodes
 BATCH_SIZE = 256  # Minibatch size for experience replay
 TARGET_UPDATE = 10  # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 500  # Max steps per episode
@@ -31,13 +32,25 @@ SEED = 42  # Random seed for reproducibility
 VIDEO_DIR = "data/videos"
 os.makedirs(VIDEO_DIR, exist_ok=True)
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # np.random.seed(SEED)
 # torch.manual_seed(SEED)
 
 # env = gym.make(ENV_NAME)
 # env = gym.make(ENV_NAME, render_mode="human")
-env = gym.make(ENV_NAME, render_mode="rgb_array")
-env = RecordVideo(env, video_folder=VIDEO_DIR, episode_trigger=lambda ep: ep % 100 == 0)
+env = NumpyToTorch(gym.make(ENV_NAME, render_mode="rgb_array"))
+
+class SafeRender(gym.Wrapper):
+    '''Wrapper to ensure render outputs are numpy arrays.'''
+    def render(self, *args, **kwargs):
+        '''Render the environment and ensure output is a numpy array.'''
+        frame = self.env.render(*args, **kwargs)
+        if isinstance(frame, torch.Tensor):
+            frame = frame.cpu().numpy()
+        return frame
+
+env = RecordVideo(SafeRender(env), video_folder=VIDEO_DIR, episode_trigger=lambda ep: ep % 100 == 0)
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
@@ -48,7 +61,8 @@ agent = model.DQNAgent(state_size, action_size,
                        gamma=GAMMA,
                        epsilon_start=EPSILON_START,
                        epsilon_end=EPSILON_END,
-                       epsilon_decay=EPSILON_DECAY)
+                       epsilon_decay=EPSILON_DECAY,
+                       device=device)
 
 total_reward = 0
 rewards = []
@@ -174,5 +188,6 @@ plt.plot(range(EVAL_INTERVAL-1, len(rewards)), moving_avg, color='red',
 plt.xlabel('Episode')
 plt.ylabel('Total Reward')
 plt.savefig('training_rewards.png')
-# plt.show()
+plt.legend()
+plt.show()
 plt.close()

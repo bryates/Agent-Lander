@@ -31,7 +31,7 @@ class QNetwork(nn.Module):
 class DQNAgent:
     '''Deep Q-Network Agent for reinforcement learning tasks.'''
     def __init__(self, state_size, action_size, batch_size, hidden_size, lr=1e-3,
-                 gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995):
+                 gamma=0.99, epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995, device='cpu'):
         self.batch_size = batch_size
         self.state_size = state_size
         self.action_size = action_size
@@ -39,19 +39,20 @@ class DQNAgent:
         self.epsilon = epsilon_start
         self.epsilon_end = epsilon_end
         self.epsilon_decay = epsilon_decay
+        self.device = device
 
-        self.q_network = QNetwork(state_size, action_size, hidden_size)
-        self.q_target = QNetwork(state_size, action_size, hidden_size)
+        self.q_network = QNetwork(state_size, action_size, hidden_size).to(device)
+        self.q_target = QNetwork(state_size, action_size, hidden_size).to(device)
         self.q_target.load_state_dict(self.q_network.state_dict())
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
-        self.memory = memory.ReplayMemory(self.state_size, 10_000, self.batch_size)
+        self.memory = memory.ReplayMemory(self.state_size, 10_000, self.batch_size, device=self.device)
 
     def act(self, state):
         '''Epsilon-greedy action selection.'''
         if random.random() < self.epsilon:
             return random.randint(0, self.action_size - 1)
-        state = torch.FloatTensor(state).unsqueeze(0)
+        state = state.to(device=self.device, dtype=torch.float32).unsqueeze(0)
         with torch.no_grad():
             q_values = self.q_network(state)
         return q_values.argmax().item()
@@ -65,11 +66,11 @@ class DQNAgent:
         if not self.memory.ready():
             return
         states, next_states, actions, rewards, dones = self.memory.sample()
-        states = torch.FloatTensor(states)
-        actions = torch.LongTensor(actions).unsqueeze(1)
-        rewards = torch.FloatTensor(rewards).unsqueeze(1)
-        next_states = torch.FloatTensor(next_states)
-        dones = torch.FloatTensor(dones).unsqueeze(1)
+        states      = torch.as_tensor(states, dtype=torch.float32, device=self.device)
+        next_states = torch.as_tensor(next_states, dtype=torch.float32, device=self.device)
+        actions     = torch.as_tensor(actions, dtype=torch.int64, device=self.device).unsqueeze(1)
+        rewards     = torch.as_tensor(rewards, dtype=torch.float32, device=self.device).unsqueeze(1)
+        dones       = torch.as_tensor(dones, dtype=torch.float32, device=self.device).unsqueeze(1)
 
         current_q_values = self.q_network(states).gather(1, actions)
         next_q_values = self.q_target(next_states).max(1)[0].unsqueeze(1)

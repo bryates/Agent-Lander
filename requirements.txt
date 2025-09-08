@@ -1,5 +1,5 @@
 torch
 numpy
-gymnasium[classic-control]
+gymnasium[classic-control,array-api]
 Box2D
 matplotlib
