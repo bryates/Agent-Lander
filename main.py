@@ -14,9 +14,9 @@ import model
 # Hyperparameters
 EPISODES = 500  # Total number of training episodes
 BATCH_SIZE = 256  # Minibatch size for experience replay
-TARGET_UPDATE = 10  # Update target network every TARGET_UPDATE episodes
+TARGET_UPDATE = 100  # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 500  # Max steps per episode
-EVAL_EPISODES = 10  # Number of episodes for evaluation
+EVAL_EPISODES = 1  # Number of episodes for evaluation
 EVAL_INTERVAL = 50  # Evaluate the agent every EVAL_INTERVAL episodes
 LEARNING_RATE = 5e-4  # Learning rate for the optimizer
 GAMMA = 0.99  # Discount factor for future rewards
@@ -137,7 +137,8 @@ for episode in range(EPISODES):
         state = next_state
         total_reward += reward
 
-        agent.replay()  # BATCH_SIZE)
+        for _ in range(EVAL_EPISODES):
+            agent.replay()  # BATCH_SIZE)
 
         if done:
             break
