@@ -9,8 +9,8 @@ from gymnasium.wrappers import RecordVideo
 import model
 
 # Hyperparameters
-EPISODES = 2000  # Total number of training episodes
-BATCH_SIZE = 256  # Minibatch size for experience replay
+EPISODES = 3000  # Total number of training episodes
+BATCH_SIZE = 64  # Minibatch size for experience replay
 TARGET_UPDATE = 10  # Update target network every TARGET_UPDATE episodes
 MAX_STEPS = 500  # Max steps per episode
 EVAL_EPISODES = 10  # Number of episodes for evaluation
@@ -167,5 +167,5 @@ plt.plot(range(EVAL_INTERVAL-1, len(rewards)), moving_avg, color='red',
 plt.xlabel('Episode')
 plt.ylabel('Total Reward')
 plt.savefig('training_rewards.png')
-# plt.show()
+plt.show()
 plt.close()
