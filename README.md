@@ -9,6 +9,14 @@ Instead of programming a set of rules or paths a model should follow, we can use
 A simple set of rules rewards the agent for making good decisions (like successfully landing the spacecraft), and penalizes poor or wasteful decisions (like crashing or wasting fuel).
 I used the concept of **reinforcement learning** with the OpenAI Gymnasium to teach a **DQN** to play Lunar Lander.
 
+## Business Analogy: Autonomous Delivery Optimization
+
+This project simulates the decision-making of autonomous delivery agents — from drones to warehouse bots — using reinforcement learning. The same RL techniques used to land a lunar module can optimize:
+
+- Last-mile delivery routes
+- Fuel-efficient navigation
+- Collision avoidance in dynamic environments
+
 ## Business Problem:  
 How can reinforcement learning be applied to optimize autonomous decision-making in real-world systems like drones or robotic delivery?
 
@@ -21,6 +29,14 @@ How can reinforcement learning be applied to optimize autonomous decision-making
 A simple AI Agent using unsupervised learning is a powerful tool for training robots for autonomous decision making.
 To mitigate earl expenses and reduce damage from sub-optimal environment exploration, we can start with software simulations of the environment and the sensors on our robot.
 This will allow us to build a base model which we can deploy to physical robots.
+
+## Stakeholder Impact
+
+For logistics teams, this RL pipeline could:
+
+- Reduce delivery costs by optimizing agent routes
+- Improve safety by minimizing crash rates
+- Enable scalable deployment of autonomous agents across delivery zones
 
 ## Next Steps
 1. Extend the agent to more complex environments (e.g., 3D simulations or real-world robotics)
